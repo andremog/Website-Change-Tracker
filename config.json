@@ -1,0 +1,1 @@
+{"update_interval": 300, "website_list": [{"name": "AuD2", "url": "https://www.ibr.cs.tu-bs.de/courses/ss19/aud2/index.html", "hash": "b42ecab03842f8e6ed46d34a42cb829962f62703", "ignore": ["<meta.*?>"]}]}
