@@ -27,34 +27,35 @@ with open('config.json', 'w', encoding='utf-8') as config:
 notification.notify('Tracking started', 'Tracking changes on ' + str(len(website_list)) + ' websites.')
 
 while True:
-  for page in website_list:
-    web_content = requests.get(page['url']).content.decode('utf-8')
+  try:
+    for page in website_list:
+      web_content = requests.get(page['url']).content.decode('utf-8')
 
-    for ignore in regular[page['hash']]:
-      web_content = ignore.sub('', web_content)
+      for ignore in regular[page['hash']]:
+        web_content = ignore.sub('', web_content)
 
-    filepath = './website_data/' + page['hash'] + '.html'
-    if not (exists(filepath) and isfile(filepath)):
-      with open(filepath, 'w', encoding='utf-8') as file:
-        file.write(web_content)
-    else:
-      changed = False
-      with open(filepath, 'r', encoding='utf-8') as file:
-        previous_content = file.read()
-        for i in range(max([len(previous_content), len(web_content)])):
-          if i >= len(previous_content):
-            print(i, web_content[i])
-          elif i >= len(web_content):
-            print(i, previous_content[i])
-          elif (previous_content[i] != web_content[i]):
-            print(i, previous_content[i], web_content[i])
-        if previous_content != web_content:
-          changed = True
-          notification.notify('Change detected', 'Change detected on website ' + page['name'] + ' (' + page['url'] + ')')
-
-      if changed:
+      filepath = './website_data/' + page['hash'] + '.html'
+      if not (exists(filepath) and isfile(filepath)):
         with open(filepath, 'w', encoding='utf-8') as file:
           file.write(web_content)
+      else:
+        changed = False
+        with open(filepath, 'r', encoding='utf-8') as file:
+          previous_content = file.read()
+          # for i in range(max([len(previous_content), len(web_content)])):
+          #   if i >= len(previous_content):
+          #     print(i, web_content[i])
+          #   elif i >= len(web_content):
+          #     print(i, previous_content[i])
+          #   elif (previous_content[i] != web_content[i]):
+          #     print(i, previous_content[i], web_content[i])
+          if previous_content != web_content:
+            changed = True
+            notification.notify('Change detected', 'Change detected on website ' + page['name'] + ' (' + page['url'] + ')')
 
-
-  sleep(update_interval)
+        if changed:
+          with open(filepath, 'w', encoding='utf-8') as file:
+            file.write(web_content)
+    sleep(update_interval)
+  except Exception as excpt:
+    print(excpt)
