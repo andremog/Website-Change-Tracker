@@ -2,7 +2,7 @@ import json
 import requests
 import hashlib
 import re
-from time import sleep
+from time import sleep, localtime, strftime
 from plyer import notification
 from os.path import exists, isfile
 
@@ -25,6 +25,8 @@ with open('config.json', 'w', encoding='utf-8') as config:
   json.dump(configuration, config)
 
 notification.notify('Tracking started', 'Tracking changes on ' + str(len(website_list)) + ' websites.')
+print(strftime('%X', localtime()), end=' - ')
+print('Started tracking changes on ' + str(len(website_list)) + ' websites.')
 
 while True:
   try:
@@ -52,10 +54,14 @@ while True:
           if previous_content != web_content:
             changed = True
             notification.notify('Change detected', 'Change detected on website ' + page['name'] + ' (' + page['url'] + ')')
+            print(strftime('%X', localtime()), end=' - ')
+            print('A change was detected on website ' + page['name'] + ' (' + page['url'] + ')')
 
         if changed:
           with open(filepath, 'w', encoding='utf-8') as file:
             file.write(web_content)
     sleep(update_interval)
   except Exception as excpt:
+    print(strftime('%X', localtime()), end=' - ')
+    print('An exception has occurred: ', end='')
     print(excpt)
